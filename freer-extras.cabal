@@ -72,8 +72,6 @@ library
     , streaming
     , text
 
-  pkgconfig-depends: zlib
-
 test-suite freer-extras-test
   import:         lang
   type:           exitcode-stdio-1.0
