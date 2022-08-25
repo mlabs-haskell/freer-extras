@@ -47,14 +47,6 @@ library
     Control.Monad.Freer.Extras.State
     Control.Monad.Freer.Extras.Stream
 
-  --------------------------
-  -- Other IOG dependencies
-  --------------------------
-  build-depends:   iohk-monitoring
-
-  ------------------------
-  -- Non-IOG dependencies
-  ------------------------
   build-depends:
     , aeson
     , base           >=4.7 && <5
@@ -86,9 +78,6 @@ test-suite freer-extras-test
   ----------------------------
   build-depends:  freer-extras
 
-  ------------------------
-  -- Non-IOG dependencies
-  ------------------------
   build-depends:
     , base            >=4.7 && <5
     , beam-core
