@@ -21,7 +21,6 @@
 
 module Control.Monad.Freer.Extras.Beam where
 
-import Cardano.BM.Data.Tracer (ToObject (..))
 import Cardano.BM.Trace (Trace, logDebug)
 import Control.Concurrent (threadDelay)
 import Control.Exception (Exception, throw, try)
@@ -59,7 +58,7 @@ type BeamThreadingArg = QNested (QNested QBaseScope)
 newtype BeamError =
   SqlError Text
   deriving stock (Eq, Show, Generic)
-  deriving anyclass (FromJSON, ToJSON, ToObject)
+  deriving anyclass (FromJSON, ToJSON)
 
 instance Exception BeamError
 
@@ -70,7 +69,7 @@ instance Pretty BeamError where
 newtype BeamLog =
   SqlLog String
   deriving stock (Eq, Show, Generic)
-  deriving anyclass (FromJSON, ToJSON, ToObject)
+  deriving anyclass (FromJSON, ToJSON)
 
 instance Pretty BeamLog where
   pretty = \case
