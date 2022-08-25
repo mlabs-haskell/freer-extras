@@ -21,7 +21,6 @@
 
 module Control.Monad.Freer.Extras.Beam where
 
-import Cardano.BM.Trace (Trace, logDebug)
 import Control.Concurrent (threadDelay)
 import Control.Exception (Exception, throw, try)
 import Control.Monad (guard)
@@ -65,15 +64,6 @@ instance Exception BeamError
 instance Pretty BeamError where
   pretty = \case
     SqlError s -> "SqlError (via Beam)" <> colon <+> pretty s
-
-newtype BeamLog =
-  SqlLog String
-  deriving stock (Eq, Show, Generic)
-  deriving anyclass (FromJSON, ToJSON)
-
-instance Pretty BeamLog where
-  pretty = \case
-    SqlLog s -> "SqlLog" <> colon <+> pretty s
 
 data BeamEffect r where
   -- Workaround for "too many SQL variables" sqlite error. Provide a
@@ -132,7 +122,7 @@ handleBeam ::
   ( LastMember IO effs
   , Member (Reader (Pool Sqlite.Connection)) effs
   )
-  => Trace IO BeamLog
+  => (String -> IO ())
   -> BeamEffect
   ~> Eff effs
 handleBeam trace eff = runBeam trace $ execute eff
@@ -181,7 +171,7 @@ runBeam ::
   ( LastMember IO effs
   , Member (Reader (Pool Sqlite.Connection)) effs
   )
-  => Trace IO BeamLog
+  => (String -> IO ())
   -> SqliteM
   ~> Eff effs
 runBeam trace action = do
@@ -189,8 +179,7 @@ runBeam trace action = do
   liftIO $ Pool.withResource pool $ \conn -> loop conn ( 5 :: Int )
   where
     loop conn retries = do
-      let traceSql = logDebug trace . SqlLog
-      resultEither <- try $ Sqlite.withTransaction conn $ runBeamSqliteDebug traceSql conn action
+      resultEither <- try $ Sqlite.withTransaction conn $ runBeamSqliteDebug trace conn action
       case resultEither of
           -- 'Database.SQLite.Simple.ErrorError' corresponds to an SQL error or
           -- missing database. When this exception is raised, we suppose it's

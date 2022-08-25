@@ -84,7 +84,6 @@ test-suite freer-extras-test
     , beam-migrate
     , beam-sqlite
     , containers
-    , contra-tracer
     , freer-simple
     , hedgehog
     , lens
