@@ -65,6 +65,15 @@ instance Pretty BeamError where
   pretty = \case
     SqlError s -> "SqlError (via Beam)" <> colon <+> pretty s
 
+newtype BeamLog =
+  SqlLog String
+  deriving stock (Eq, Show, Generic)
+  deriving anyclass (FromJSON, ToJSON)
+
+instance Pretty BeamLog where
+  pretty = \case
+    SqlLog s -> "SqlLog" <> colon <+> pretty s
+
 data BeamEffect r where
   -- Workaround for "too many SQL variables" sqlite error. Provide a
   -- batch size so that we avoid the error. The maximum is 999.
@@ -122,7 +131,7 @@ handleBeam ::
   ( LastMember IO effs
   , Member (Reader (Pool Sqlite.Connection)) effs
   )
-  => (String -> IO ())
+  => (BeamLog -> IO ())
   -> BeamEffect
   ~> Eff effs
 handleBeam trace eff = runBeam trace $ execute eff
@@ -171,7 +180,7 @@ runBeam ::
   ( LastMember IO effs
   , Member (Reader (Pool Sqlite.Connection)) effs
   )
-  => (String -> IO ())
+  => (BeamLog -> IO ())
   -> SqliteM
   ~> Eff effs
 runBeam trace action = do
@@ -179,7 +188,8 @@ runBeam trace action = do
   liftIO $ Pool.withResource pool $ \conn -> loop conn ( 5 :: Int )
   where
     loop conn retries = do
-      resultEither <- try $ Sqlite.withTransaction conn $ runBeamSqliteDebug trace conn action
+      let traceSql = trace . SqlLog
+      resultEither <- try $ Sqlite.withTransaction conn $ runBeamSqliteDebug traceSql conn action
       case resultEither of
           -- 'Database.SQLite.Simple.ErrorError' corresponds to an SQL error or
           -- missing database. When this exception is raised, we suppose it's
