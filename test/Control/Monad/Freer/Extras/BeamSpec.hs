@@ -21,7 +21,6 @@ import Control.Monad.Freer.Error (Error, runError)
 import Control.Monad.Freer.Extras.Beam (BeamEffect, BeamError, handleBeam, selectPage)
 import Control.Monad.Freer.Extras.Pagination (Page (..), PageQuery (..))
 import Control.Monad.Freer.Reader (Reader, runReader)
-import Control.Tracer (nullTracer)
 import Data.Int (Int16)
 import Data.Kind (Constraint)
 import Data.List (sort)
@@ -206,7 +205,7 @@ runBeamEffect
     -> IO (Either BeamError a)
 runBeamEffect pool effect = do
   effect
-    & interpret (handleBeam nullTracer)
+    & interpret (handleBeam (const $ return ()))
     & runError
     & runReader pool
     & runM
