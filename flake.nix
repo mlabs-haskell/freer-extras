@@ -162,7 +162,6 @@
       hydraJobs = {
         inherit (self) checks packages devShells;
       };
+      herculesCI.ciSystems = [ "x86_64-linux" ];
     };
 }
-
-
