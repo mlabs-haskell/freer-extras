@@ -22,7 +22,7 @@
     };
   };
 
-   nixConfig = {
+  nixConfig = {
     extra-substituters = [
       "https://cache.iog.io"
       "https://hydra.iohk.io"

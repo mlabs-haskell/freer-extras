@@ -77,7 +77,6 @@ test-suite freer-extras-test
   -- Local components
   ----------------------------
   build-depends:  freer-extras
-
   build-depends:
     , base            >=4.7 && <5
     , beam-core
