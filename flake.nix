@@ -22,7 +22,7 @@
     };
   };
 
-   nixConfig = {
+  nixConfig = {
     extra-substituters = [
       "https://cache.iog.io"
       "https://hydra.iohk.io"
@@ -162,7 +162,6 @@
       hydraJobs = {
         inherit (self) checks packages devShells;
       };
+      herculesCI.ciSystems = [ "x86_64-linux" ];
     };
 }
-
-
