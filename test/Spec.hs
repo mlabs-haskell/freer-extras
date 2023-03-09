@@ -1,8 +1,8 @@
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE MonoLocalBinds   #-}
+{-# LANGUAGE MonoLocalBinds #-}
 {-# OPTIONS_GHC -fno-warn-incomplete-uni-patterns #-}
 
-module Main(main) where
+module Main (main) where
 
 import Control.Monad.Freer.Extras.BeamSpec qualified as BeamSpec
 import Control.Monad.Freer.Extras.PaginationSpec qualified as PaginationSpec
@@ -14,8 +14,8 @@ main = defaultMain tests
 
 tests :: TestTree
 tests =
-  testGroup "tests"
-    [ BeamSpec.tests
-    , PaginationSpec.tests
-    ]
-
+    testGroup
+        "tests"
+        [ BeamSpec.tests
+        , PaginationSpec.tests
+        ]
